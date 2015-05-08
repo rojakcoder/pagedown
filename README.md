@@ -21,13 +21,13 @@ The easiest way to get the Markdown converter working in node.js is by getting i
    $ npm install pagedown   
    [...snip...]   
    $ node   
-   > var pagedown = require("pagedown");   
-   > var converter = new pagedown.Converter();   
-   > var safeConverter = pagedown.getSanitizingConverter();   
-   > converter.makeHtml("*hello*")   
+   &gt; var pagedown = require("pagedown");   
+   &gt; var converter = new pagedown.Converter();   
+   &gt; var safeConverter = pagedown.getSanitizingConverter();   
+   &gt; converter.makeHtml("*hello*")   
    '<p><em>hello</em></p>'   
-   > safeConverter.makeHtml("Hello <script>doEvil();</script>")   
-   >'<p>Hello doEvil();</p>'
+   &gt; safeConverter.makeHtml("Hello <script>doEvil();</script>")   
+   &gt;'<p>Hello doEvil();</p>'
 
 If you don't want to use npm, then follow the instructions below.
 
@@ -102,11 +102,11 @@ The file adds the property `Markdown.Editor`, which is a constructor taking up t
 
 *   The second argument is optional, and is usually only necessary if you're using several editors within the same page. If given, this argument is a string, appended to the HTML element ids of the three elements used by the editor.
 
-> By default, the editor looks for `#wmd-button-bar`, `#wmd-input`, and `#wmd-preview`. If you're using more than one editor, you of course can't give the second group of elements the same ids as the first, so you may create the second input box as `<textarea id="wmd-input-2">` and pass the string `"-2"` as the second argument to the constructor.
+By default, the editor looks for `#wmd-button-bar`, `#wmd-input`, and `#wmd-preview`. If you're using more than one editor, you of course can't give the second group of elements the same ids as the first, so you may create the second input box as `<textarea id="wmd-input-2">` and pass the string `"-2"` as the second argument to the constructor.
 
 *   The third argument is optional as well, and if given, is an object containing information about the "Help" button offered to the user. The object needs a `handler` property, which will be the `onclick` handler of the help button. It can also have a `title` property, which is then set as the tooltip (i.e. `title` attribute) of the help button. If not given, the `title` defaults to "Markdown Editing Help".
 
-> If the third argument isn't passed, no help button will be created.
+If the third argument isn't passed, no help button will be created.
 
 The created editor object has (up to) three methods:
 
@@ -131,17 +131,17 @@ Following is a list of the available plugin hooks.
 
 Called with the Markdown source as given to the converter's `makeHtml` object, should return the actual to-be-converted source. Fine to chain.
 
-   converter.hooks.chain("preConversion", function (text) {   
-       return "# Converted text follows\n\n" + text; // creates a level 1 heading   
-   });
+    converter.hooks.chain("preConversion", function (text) {   
+        return "# Converted text follows\n\n" + text; // creates a level 1 heading   
+    });
 
 ### `postConversion`
 
 Called with the HTML that was created from the Markdown source. The return value of this hook is the actual output that will then be returned from `makeHtml`. This is where `getSanitizingConverter` (see above) registers the tag sanitzer and balancer. Fine to chain.
 
-   converter.hooks.chain("postConversion", function (text) {   
-       return text + "<br>\n**This is not bold, because it was added after the conversion**";   
-   });
+    converter.hooks.chain("postConversion", function (text) {   
+        return text + "<br>\n**This is not bold, because it was added after the conversion**";   
+    });
 
 ### `plainLinkText`
 
@@ -151,12 +151,12 @@ Note that the returned string will be inserted verbatim, not HTML-encoded in any
 
 Okay to chain, although this may or may not make sense (after all you're receiving a URL and returning just about anything).
 
-   converter.hooks.chain("plainLinkText", function (url) {   
-       if (/^http:\/\/\w+\.stackexchange.com/i.test(url))   
-           return "<b>A link to an awesome site!</b>";   
-       else   
-           return "some page on the internet";   
-   });
+    converter.hooks.chain("plainLinkText", function (url) {   
+        if (/^http:\/\/\w+\.stackexchange.com/i.test(url))   
+            return "<b>A link to an awesome site!</b>";   
+        else   
+            return "some page on the internet";   
+    });
 
 ### _Notice on the following hooks_
 
@@ -176,11 +176,11 @@ If you are creating a new kind of block-level structure that can include other M
 
 As a contrived and simplified expample, let's say you're inventing fenced blockquotes, where blocks that are surrounded by lines with three quote characters in them are turned into block quotes. Such a thing could look like this:
 
-   converter.hooks.chain("preBlockGamut", function (text, runBlockGamut) {   
-       return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {   
-           return "<blockquote>" + runBlockGamut(inner) + "</blockquote>\n";   
-       });   
-   });
+    converter.hooks.chain("preBlockGamut", function (text, runBlockGamut) {   
+        return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {   
+            return "&lt;blockquote&gt;" + runBlockGamut(inner) + "&lt;/blockquote&gt;\n";   
+        });   
+    });
 
 The first editor in the [demo page](http://pagedown.googlecode.com/hg/demo/browser/demo.html) implements this.
 
@@ -196,9 +196,9 @@ Remember to add all your necessary plugins _before_ you call the editor's `run()
 
 Called with no arguments after the editor's preview has been updated. No return value is expected. Fine to chain, if you want to be notified of a refresh in several places.
 
-   editor.hooks.chain("onPreviewRefresh", function () {   
-       console.log("the preview has been updated");   
-   });
+    editor.hooks.chain("onPreviewRefresh", function () {   
+        console.log("the preview has been updated");
+    });
 
 ### `postBlockquoteCreation`
 
@@ -206,11 +206,11 @@ Called after the user has clicked the "Blockquote" button (or pressed Ctrl-Q) an
 
 The name isn't 100% correct, as this hook is also called if a blockquote is _removed_ using this button. Fine to chain (but probably unlikely to be used anyway).
 
-   editor.hooks.chain("postBlockquoteCreation", function (text) {   
-       if (!/^>/.test(text))   
-           return text; // the blockquote button was clicked to remove a blockquote -- no change   
-       return text + "\n\nThe above blockquote is brought to you by PunyonDew(tm)\n\n"   
-   });
+    editor.hooks.chain("postBlockquoteCreation", function (text) {   
+        if (!/^>/.test(text))   
+            return text; // the blockquote button was clicked to remove a blockquote -- no change   
+        return text + "\n\nThe above blockquote is brought to you by PunyonDew(tm)\n\n"   
+    });
 
 ### `insertImageDialog`
 
@@ -218,21 +218,21 @@ When the user clicks the "add image" button, they usually get a little dialog to
 
 It does _not_ make sense to chain functions on this hook.
 
-   editor.hooks.set("insertImageDialog", function (callback) {   
-       alert("Please click okay to start scanning your brain...");   
-       setTimeout(function () {   
-           var prompt = "We have detected that you like cats. Do you want to insert an image of a cat?";   
-           if (confirm(prompt))   
-               callback("http://icanhascheezburger.files.wordpress.com/2007/06/schrodingers-lolcat1.jpg")   
-           else   
-               callback(null);   
-       }, 2000);   
-       return true; // tell the editor that we'll take care of getting the image url   
-   });
+    editor.hooks.set("insertImageDialog", function (callback) {   
+        alert("Please click okay to start scanning your brain...");   
+        setTimeout(function () {   
+            var prompt = "We have detected that you like cats. Do you want to insert an image of a cat?";   
+            if (confirm(prompt))   
+                callback("http://icanhascheezburger.files.wordpress.com/2007/06/schrodingers-lolcat1.jpg")   
+            else   
+                callback(null);   
+        }, 2000);   
+        return true; // tell the editor that we'll take care of getting the image url   
+    });
 
 Note that you cannot call the callback directly from the hook; you have to wait for the current scope to be exited. If for any reason you want to return a link immediately, you'll have to use a 0ms timeout:
 
-   editor.hooks.set("insertImageDialog", function (callback) {   
-       setTimeout(function () { callback("http://example.com/image.jpg"); }, 0);   
-       return true;   
-   });
+    editor.hooks.set("insertImageDialog", function (callback) {   
+        setTimeout(function () { callback("http://example.com/image.jpg"); }, 0);   
+        return true;   
+    });
